@@ -12,9 +12,7 @@ include (CPack)
 include (CTest)
 include (GNUInstallDirs)
 
-set (PROJECT hello)
-
-set (CPACK_PACKAGE_NAME "lib${PROJECT}-dev")
+set (CPACK_PACKAGE_NAME "lib${PROJECT_NAME}-dev")
 set (CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set (CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set (CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
@@ -26,7 +24,7 @@ list (APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set (_internal_CMake_BINDIR ${CMAKE_INSTALL_BINDIR})
 set (_internal_CMake_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR})
 set (_internal_CMake_LIBDIR ${CMAKE_INSTALL_LIBDIR})
-set (_internal_CMake_INSTALLDIR ${_internal_CMake_LIBDIR}/cmake/${PROJECT})
+set (_internal_CMake_INSTALLDIR ${_internal_CMake_LIBDIR}/cmake/${PROJECT_NAME})
 
 option (WITH_PKGCONFIG "Enable pkg-config support" ON)
 
@@ -38,8 +36,8 @@ if (WITH_PKGCONFIG)
   set (includedir ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 
   configure_file (
-    "${PROJECT_SOURCE_DIR}/lib${PROJECT}.pc.in"
-    "${PROJECT_BINARY_DIR}/lib${PROJECT}.pc"
+    "${PROJECT_SOURCE_DIR}/lib${PROJECT_NAME}.pc.in"
+    "${PROJECT_BINARY_DIR}/lib${PROJECT_NAME}.pc"
     @ONLY
   )
 
@@ -62,46 +60,46 @@ set (SRCS
   src/hello.cc
 )
 
-set (DYNAMIC_TARGET ${PROJECT})
-set (STATIC_TARGET ${PROJECT}_static)
+set (DYNAMIC_TARGET ${PROJECT_NAME})
+set (STATIC_TARGET ${PROJECT_NAME}_static)
 
 add_library (${DYNAMIC_TARGET} SHARED ${SRCS})
 add_library (${STATIC_TARGET} STATIC ${SRCS})
-set_target_properties (${STATIC_TARGET} PROPERTIES OUTPUT_NAME ${PROJECT})
+set_target_properties (${STATIC_TARGET} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 set_target_properties (${DYNAMIC_TARGET} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 1)
 set_target_properties (${DYNAMIC_TARGET} PROPERTIES PUBLIC_HEADER "${PUBLIC_H}")
 
-configure_package_config_file (${PROJECT}-config.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT}-config.cmake
+configure_package_config_file (${PROJECT_NAME}-config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
   INSTALL_DESTINATION ${_internal_CMake_INSTALLDIR}
   NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 write_basic_package_version_file (
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT}-config-version.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
   COMPATIBILITY SameMajorVersion)
 
-export (TARGETS ${DYNAMIC_TARGET} FILE ${PROJECT}-targets.cmake)
-export (PACKAGE ${PROJECT})
+export (TARGETS ${DYNAMIC_TARGET} FILE ${PROJECT_NAME}-targets.cmake)
+export (PACKAGE ${PROJECT_NAME})
 
 install (TARGETS ${DYNAMIC_TARGET} ${STATIC_TARGET}
-  EXPORT ${PROJECT}-targets
-  PUBLIC_HEADER DESTINATION ${_internal_CMake_INCLUDE_DIR}/${PROJECT}
+  EXPORT ${PROJECT_NAME}-targets
+  PUBLIC_HEADER DESTINATION ${_internal_CMake_INCLUDE_DIR}/${PROJECT_NAME}
   LIBRARY DESTINATION ${_internal_CMake_LIBDIR}
   ARCHIVE DESTINATION ${_internal_CMake_LIBDIR})
 
 install (FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT}-config.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT}-config-version.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
   DESTINATION ${_internal_CMake_INSTALLDIR})
 
 if (WITH_PKGCONFIG)
   install (
-    FILES "${PROJECT_BINARY_DIR}/lib${PROJECT}.pc"
+    FILES "${PROJECT_BINARY_DIR}/lib${PROJECT_NAME}.pc"
     DESTINATION "${_internal_CMake_LIBDIR}/pkgconfig"
   )
 endif (WITH_PKGCONFIG)
 
-install (EXPORT ${PROJECT}-targets DESTINATION ${_internal_CMake_INSTALLDIR})
+install (EXPORT ${PROJECT_NAME}-targets DESTINATION ${_internal_CMake_INSTALLDIR})
 
 # test
 find_package(GTest REQUIRED)
