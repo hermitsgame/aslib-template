@@ -60,20 +60,24 @@ write_basic_package_version_file (
 # src
 find_package(glog REQUIRED)
 
-set (SRC_LIST
+set (PUBLIC_H
+  src/hello.h
+)
+
+set (SRCS
+  ${PUBLIC_H}
   src/hello.cc
 )
-add_library (hello SHARED ${SRC_LIST})
-add_library (hello_static STATIC ${SRC_LIST})
+add_library (hello SHARED ${SRCS})
+add_library (hello_static STATIC ${SRCS})
 set_target_properties (hello_static PROPERTIES OUTPUT_NAME "hello")
 set_target_properties (hello PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 1)
+set_target_properties (hello PROPERTIES PUBLIC_HEADER "${PUBLIC_H}")
 
 install (TARGETS hello hello_static 
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib)
-
-install (FILES src/hello.h
-  DESTINATION include/hello)
+  PUBLIC_HEADER DESTINATION ${_hello_CMake_INCLUDE_DIR}/hello
+  LIBRARY DESTINATION ${_hello_CMake_LIBDIR}
+  ARCHIVE DESTINATION ${_hello_CMake_LIBDIR})
 
 install (FILES
   ${CMAKE_CURRENT_BINARY_DIR}/hello-config.cmake
